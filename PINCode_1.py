@@ -123,7 +123,7 @@ def buttonHandler(arg1):
 				del number[:]
 			u_pw.destroy() #Exit the admin window
 		
-  #"""      
+       
 
 #Handles the button click event and argument passed
 def buttonHandler_a(event, argument1):
