@@ -22,9 +22,9 @@ e1=Entry
 e2=Entry
 
 #Some Database things
-conn = sqlite3.connect('pin_database.sqlite')
-c = conn.cursor()
-print "PIN Database is now open for use"
+#conn = sqlite3.connect('pin_database.sqlite')
+#c = conn.cursor()
+#print "PIN Database is now open for use"
 
 
 
