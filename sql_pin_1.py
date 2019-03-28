@@ -23,3 +23,7 @@ print lite.version
 print "PIN Database is now open for use"
 conn.close
 print "PIN Database is now closed"
+
+def create_table(conn, table_name):
+    cu = conn.cursor()
+    cu.execute()
