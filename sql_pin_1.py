@@ -18,7 +18,7 @@ field_type2='STRING'
 '''
     
      
-conn = lite.connect("sqlite.db")
+conn = lite.connect("pin_database.db")
 print lite.version
 print "PIN Database is now open for use"
 conn.close
