@@ -12,22 +12,57 @@ from Tkinter import *
 import tkFont
 #For hashing pass codes
 import hashlib
+import sqlite3 as lite
 
+
+
+global users, number, c
 #Blank number array for code
 number=[]
 
 #Blank dictionary for users/pass
 users={}
+pas='1234'
+nm='admin'
+users[nm]=hashlib.md5(pas).hexdigest()
 e1=Entry
 e2=Entry
 
 #Some Database things
-#conn = sqlite3.connect('pin_database.db')
-#c = conn.cursor()
-#print "PIN Database is now open for use"
+conn = lite.connect('pin_dtb.db')
+c = conn.cursor()
+def disp_u(c):
+	import sql_pin_1 as sp
+	sp.db_upr(c)
+def disp_p(c):
+	import sql_pin_1 as sp
+	sp.db_ppr(c)
+def dtb_c(conn):
+	import sql_pin_1 as sp
+	sp.db_close(conn)
+print "PIN Database is now open for use\n"
+
+
+'''c.execute("""
+	create table admins(
+		user,
+		pw);""")'''
+
+
+'''c.execute("""create table users_pin(
+		userN,
+		userPin,
+		time);"""
+	)'''
+
+u=(nm,users[nm])
+c.execute('insert into admins values (?,?)',u)
 
 
 
+disp_u(c)
+disp_p(c)
+dtb_c(conn)
 
 # gets called when the quit button is hit on the gui	
 def destroy():
@@ -44,28 +79,33 @@ def joinNums(list):
 def buttonHandler(arg1):   
 	if arg1 is "ENTER":
 		#Use enter function
-		print "Pin Entered: ", arg1
-		print number
+		print "Pin Command: ", arg1
+		#print number
 
 		#Checks if the number length is <4, if it is, tell the user
-		if len(number) < 3:
+		if len(number) is not 4:
 			print "Incorrect Password Size"
 			del number[:]
 		else:
 			#Gets the code from the number array
 			code = joinNums(number)
-			#Hashes the code to check against the hashed stored password
+			#print code
+			#Hashes the code to check w/ the hashed stored password
 			hashCode=hashlib.md5(code).hexdigest()
-	
+			#print hashCode
+			check=0
 			for i in range(4):
 				#Checks if the hash matches the stored hash
-				if hashCode == users['Greg']:
-					#Sets a check to 1 if the hashes matched
+				if hashCode in users.values():
+					#Sets a check to 1 if the hashes matched					
 					check = 1
+					#Finds associated name
+					
 				else:
+					#print users['Greg']
 					#Otherwise, set the check to zero
 					check = 0
-				#Prints the number array in a text box next to the numpad
+				#Prints the number array in a text box above the numpad
 				text.insert(END,number[i])
 
 			#If the check passes then it is correct
@@ -75,6 +115,8 @@ def buttonHandler(arg1):
 			#If it doesn't, then it is obviously incorrect					
 			else:
 				print "Incorrect!"
+				#Add pin entry to record database
+
 
 		#Deletes the number array on an ENTER	
 		del number[:]
@@ -83,7 +125,7 @@ def buttonHandler(arg1):
 	#then it will append the number to the end of the number array 
 	else:
 		number.append(arg1)
-		print "Received arguments:", arg1
+		print "Received argument:", arg1
 
 	#If the button pressed is CLEAR then clear the array and text
 	if arg1 is "CLEAR":
