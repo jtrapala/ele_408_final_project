@@ -5,38 +5,49 @@ It creates a database for storing pins and names
 Do not run if already made, I think it will make a blank copy
 '''
 import sqlite3 as lite
-from sqlite3 import Error
+import datetime
+#from sqlite3 import Error
 
 
-conn = lite.connect('pin_dtb.db')
-c = conn.cursor()
+global conn, c
 
+def start_c1():
+	conn = lite.connect('pin_dtb.db')
+	return conn
+
+def start_c2(conn):
+	c = conn.cursor()
+	return c
 #Creates admin table
-def adt():
+def adt(c):
 	c.execute("""
 		create table admins(
 			user,
 			pw);""")
 
 #Creates user/pin/time table
-def upt():
+def upt(c):
 	c.execute("""create table users_pin(
 		userN,
 		userPin,
 		time);""")
+def adm_add(nm, users, c):
+	u=(nm,users[nm])
+	c.execute('insert into admins values (?,?)',u)
 
-#u=(nm,users[nm])
-#c.execute('insert into admins values (?,?)',u)
+def unk_pin(c, code, conn):
+	unk='unknown'
+	time=str (datetime.datetime.now())
+	u=(unk, code, time)
+	print u
+	c.execute('insert into users_pin values (?,?,?)', u)
+	conn.commit()
 
-def unk_pin(c, code, time):
-	u=('unknown', code, time)
-	c.execute('insert into users_pin values (?,?,?)',u)
-
-
-def kn_pin(c, users, nm, time):	
+def kn_pin(c, users, nm, conn):
+	time=datetime.datetime.now()	
 	u=(nm, users[nm], time)
-	c.execute('insert into users_pin values (?,?,?)',u)
-
+	c.execute('insert into users_pin values (?,?,?)', u)
+	conn.commit()
 
 
 def db_upr(c):

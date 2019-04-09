@@ -12,11 +12,16 @@ from Tkinter import *
 import tkFont
 #For hashing pass codes
 import hashlib
-import sqlite3 as lite
+#import sqlite3 as lite
+import sql_pin_1 as sp
+global users, number, code, nm, sql_name, conn, c
 
+#Get connection going
+conn=sp.start_c1()
 
+#Get cursor
+c=sp.start_c2(conn)
 
-global users, number, c
 #Blank number array for code
 number=[]
 
@@ -29,45 +34,31 @@ e1=Entry
 e2=Entry
 
 #Some Database things
-conn = lite.connect('pin_dtb.db')
-c = conn.cursor()
-def disp_u(c):
-	import sql_pin_1 as sp
-	sp.db_upr(c)
-def disp_p(c):
-	import sql_pin_1 as sp
-	sp.db_ppr(c)
-def dtb_c(conn):
-	import sql_pin_1 as sp
-	sp.db_close(conn)
+#conn = lite.connect('pin_dtb.db', timeout=120)
+
+
+#KNOWN PINS
+#sp.kn_pin(c, code, conn) 
+
+    
 print "PIN Database is now open for use\n"
 
+#sp.adt()
+#sp.upt()
+#sp.adm_add(nm, users, c)
 
-'''c.execute("""
-	create table admins(
-		user,
-		pw);""")'''
+#Print admin table
+sp.db_upr(c)
+#Print pin entry table
+sp.db_ppr(c)
 
-
-'''c.execute("""create table users_pin(
-		userN,
-		userPin,
-		time);"""
-	)'''
-
-u=(nm,users[nm])
-c.execute('insert into admins values (?,?)',u)
-
-
-
-disp_u(c)
-disp_p(c)
-dtb_c(conn)
 
 # gets called when the quit button is hit on the gui	
 def destroy():
-	sys.exit()
-
+	sp.db_close(conn)
+	master.destroy()
+	
+	
 #Joins the integer array into a singular string
 def joinNums(list):
 	s=[str(i) for i in list]
@@ -106,17 +97,19 @@ def buttonHandler(arg1):
 					#Otherwise, set the check to zero
 					check = 0
 				#Prints the number array in a text box above the numpad
-				text.insert(END,number[i])
+				text.insert(END, number[i])
 
 			#If the check passes then it is correct
-			if check is 1:
+			if check == 1:
 				print "Correct"
 				
 			#If it doesn't, then it is obviously incorrect					
 			else:
-				print "Incorrect!"
+				print "Incorrect"
+				#
+				sp.unk_pin(c, code, conn)
+                
 				#Add pin entry to record database
-
 
 		#Deletes the number array on an ENTER	
 		del number[:]
@@ -128,14 +121,14 @@ def buttonHandler(arg1):
 		print "Received argument:", arg1
 
 	#If the button pressed is CLEAR then clear the array and text
-	if arg1 is "CLEAR":
+	if arg1 == "CLEAR":
 		text.delete('1.0', END)
 		del number[:]
         
     #If the settings button is pressed, then have username
     #and password prompt appear
     
-	if arg1 is "SET":
+	if arg1 == "SET":
 		u_pw=Toplevel(master)
 		u_pw.title("Admin Settings Login Window")
 		Label(u_pw,text = "Username").grid(row=0, column=1)
